@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <title>New Patient</title>
+    <link rel="stylesheet" href="./index.css">
+    <style>
+      .patient{
+        width:auto;
+        padding: 10px;
+        border: 5px solid gray;
+        margin: 10px;
+      }
+      .card > body {
+        font-size: 8rem;
+        color: #777;
+      }
+      .search-patients{
+        display: grid;
+        grid-template-columns:repeat(auto-fill, minmax(150px, ifr));
+        gap: .25rem;
+        margin-top: 1rem;
+      }
+      .hide{
+        display: none;
+      }
+      table {
+        border-collapse: collapse;
+      }
+      table td{
+        text-align: center;
+        border: 6px solid;
+        padding: 10px;
+      }
+    </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <a class="navbar-brand" href="/">Login</a>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/reg_patients" name="reg_patients">Register Patient</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/new_patients" name="new_patients">IN-Patients</a>
+          </li>
+        </ul>
+        <!-- <h5 class="nav-item">
+          <label for="psearch">Search for Patient:</label>
+          <input type="search" id="psearch" name="psearch" onkeyup="search()" data-search>
+        </h5> -->
+      </div>
+    </div>
+  </nav>
+    <h1>Already Registerd Patients</h1>
+    <form action="/new_patients" method="POST">
+        {% block body %}
+      <div class="search-patients" id="search-patients">
+        <ul>
+          <div class="pat" id="pat"></div>
+            {% for patient in patients %}
+                <h3 class="patient">{{patient}}</h3><br>
+            {% endfor %}
+          </div>
+        </ul>
+      </div>
+        {% endblock %}
+    </form><br>
+    <h2>Check Registered Patients</h2>
+    <input type="file" accept=".csv" id = "picker"><br><br>
+    <table id="table"></table><br>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+    <script>
+      window.onload = () => {
+        var reader = new FileReader(),
+          picker = document.getElementById("picker");
+          table = document.getElementById("table");
+        
+        picker.onchange = () => reader.readAsText(picker.files[0]);
+        reader.onloadend = () => {
+          let csv = reader.result;
+          table.innerHTML = "";
+
+          let rows = csv.split("\r\n");
+          for (let row of rows) {
+            let cols = row.match(/(?:\"([^\"]*(?:\"\"[^\"]*)*)\")|([^\",]+)/g);
+            if (cols != null){
+              let tr = table.insertRow();
+              for(let col of cols){
+                let td = tr.insertCell();
+                td.innerHTML = col.replace(/(^"|"$)/g, "");
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+</body>
+</html>
+
